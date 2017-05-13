@@ -1,8 +1,8 @@
-package richslide.meeting.brainwriting.business.domain;
+package richslide.meeting.business.domain.brainwriting;
 
 import java.io.Serializable;
 
-public class User implements Serializable {
+public class User implements Serializable, Comparable<User> {
 
 	private static final long serialVersionUID = -6347822781778735996L;
 	
@@ -69,6 +69,11 @@ public class User implements Serializable {
 	public String toString() {
 		return "User [userId=" + userId + ", userName=" + userName + ", email=" + email + ", password=" + password
 				+ ", role=" + role + "]";
+	}
+
+	@Override
+	public int compareTo(User o) {
+		return this.userId - o.userId;
 	}
 	
 }
