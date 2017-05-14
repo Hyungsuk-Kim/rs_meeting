@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<properties resource="db.properties" />
+
+	<typeAliases>
+		<package name="richslide.meeting.business.domain.brainwriting" />
+	</typeAliases>
+
+	<environments default="production">
+		<environment id="development">
+			<!-- 트랜잭션 관리자 설정 -->
+			<transactionManager type="JDBC" />
+			<!-- 데이터 소스 설정 -->
+			<dataSource type="POOLED">
+				<property name="driver" value="${jdbc.driver}" />
+				<property name="url" value="${jdbc.url}" />
+				<property name="username" value="${jdbc.username}" />
+				<property name="password" value="${jdbc.password}" />
+			</dataSource>
+		</environment>
+		<environment id="production">
+			<!-- 트랜잭션 관리자 설정 -->
+			<transactionManager type="MANAGED" />
+			<!-- 데이터 소스 설정 -->
+			<dataSource type="JNDI">
+				<property name="initial_context" value="${jndi.initial_context}" />
+				<property name="data_source" value="${jndi.data_source}" />
+			</dataSource>
+		</environment>
+	</environments>
+
+	<mappers>
+		<!-- 매퍼 설정 -->
+		<package name="richslide.meeting.business.dataaccess.mybatis.mapper" />
+	</mappers>
+</configuration>

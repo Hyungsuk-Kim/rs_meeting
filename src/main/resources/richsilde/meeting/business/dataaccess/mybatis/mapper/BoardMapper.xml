@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="casestudy.dataaccess.mybatis.mapper.BoardMapper">
+    <resultMap type="Board" id="BoardResult">
+        <id property="num" column="num" />
+        <result property="writer" column="writer"/>
+        <result property="title" column="title"/>
+        <result property="contents" column="contents"/>
+        <result property="ip" column="ip"/>
+        <result property="readCount" column="read_count"/>
+        <result property="regDate" column="reg_date"/>
+        <result property="modDate" column="mod_date"/>
+        <result property="masterNum" column="master_num"/>
+        <result property="replyOrder" column="reply_order"/>
+        <result property="replyStep" column="reply_step"/>
+    </resultMap>
+    
+    <select id="selectBoardCount" parameterType="Map" resultType="_int">
+        SELECT count(num) FROM board
+    </select>
+    
+    <select id="selectBoardList" parameterType="Map" resultMap="BoardResult">
+        SELECT num, writer, title, contents, read_count, reg_date, reply_step FROM board 
+        	<where>
+	       	    <if test="searchType != null and searchType eq 'all'.toString()">
+                	LOWER(writer) LIKE LOWER(#{searchText}) OR LOWER(title) LIKE LOWER(#{searchText}) OR LOWER(contents) LIKE LOWER(#{searchText}) ESCAPE '@'
+	            </if>
+	            <if test="searchType != null and searchType eq 'title'.toString()">
+	                OR LOWER(title) LIKE LOWER(#{searchText}) ESCAPE '@'
+	            </if>
+	            <if test="searchType != null and searchType eq 'writer'.toString()">
+	                OR LOWER(writer) LIKE LOWER(#{searchText}) ESCAPE '@'
+	            </if>
+	            <if test="searchType != null and searchType eq 'contents'.toString()">
+	                OR LOWER(contents) LIKE LOWER(#{searchText}) ESCAPE '@'
+	            </if>
+        	</where> 
+        	ORDER BY master_num DESC, reply_order
+    </select>
+    
+    <!-- 쿼리문으로 행의 수 제한 -->
+    <!--
+    <select id="selectBoardCount" parameterType="Map" resultType="_int">
+        SELECT count(num) FROM board
+        <where>
+       	    <if test="searchType != null and searchType eq 'all'.toString()">
+                LOWER(writer) LIKE LOWER(#{searchText}) OR LOWER(title) LIKE LOWER(#{searchText}) OR LOWER(contents) LIKE LOWER(#{searchText}) ESCAPE '@'
+            </if>
+            <if test="searchType != null and searchType eq 'title'.toString()">
+                OR LOWER(title) LIKE LOWER(#{searchText}) ESCAPE '@'
+            </if>
+            <if test="searchType != null and searchType eq 'writer'.toString()">
+                OR LOWER(writer) LIKE LOWER(#{searchText}) ESCAPE '@'
+            </if>
+            <if test="searchType != null and searchType eq 'contents'.toString()">
+                OR LOWER(contents) LIKE LOWER(#{searchText}) ESCAPE '@'
+            </if>
+        </where>
+    </select>
+    
+    <select id="selectBoardList" parameterType="Map" resultMap="BoardResult">
+        SELECT num, writer, title, contents, read_count, reg_date, reply_step 
+        FROM (SELECT ROWNUM AS row_num, num, writer, title, contents, read_count, reg_date, reply_step 
+        	FROM (SELECT num, writer, title, contents, read_count, reg_date, reply_step FROM board 
+        	<where>
+	       	    <if test="searchType != null and searchType eq 'all'.toString()">
+                	LOWER(writer) LIKE LOWER(#{searchText}) OR LOWER(title) LIKE LOWER(#{searchText}) OR LOWER(contents) LIKE LOWER(#{searchText}) ESCAPE '@'
+	            </if>
+	            <if test="searchType != null and searchType eq 'title'.toString()">
+	                OR LOWER(title) LIKE LOWER(#{searchText}) ESCAPE '@'
+	            </if>
+	            <if test="searchType != null and searchType eq 'writer'.toString()">
+	                OR LOWER(writer) LIKE LOWER(#{searchText}) ESCAPE '@'
+	            </if>
+	            <if test="searchType != null and searchType eq 'contents'.toString()">
+	                OR LOWER(contents) LIKE LOWER(#{searchText}) ESCAPE '@'
+	            </if>
+        	</where> 
+        	ORDER BY master_num DESC, reply_order))
+        WHERE row_num BETWEEN #{startRow} AND #{endRow}
+    </select>
+    -->
+    
+    <select id="selectBoard" parameterType="_int" resultMap="BoardResult">
+        SELECT * FROM board WHERE num = #{num}
+    </select>
+    
+    <update id="updateReadCount" parameterType="_int">
+        UPDATE board set read_count = read_count + 1 WHERE num = #{num}
+    </update>
+    
+    <insert id="insertBoard" parameterType="Board">
+        <selectKey keyProperty="num" resultType="_int" order="BEFORE">
+            SELECT board_num_seq.NEXTVAL FROM dual
+        </selectKey>
+        INSERT INTO board (num, writer, title, contents, ip, read_count, reg_date, mod_date, master_num) 
+        VALUES (#{num}, #{writer}, #{title}, #{contents}, #{ip}, #{readCount}, #{regDate}, #{modDate}, #{num})
+    </insert>
+    
+    <update id="updateBoard" parameterType="Board">
+        UPDATE board SET writer = #{writer}, title = #{title}, contents = #{contents}, ip = #{ip}, mod_date = #{modDate} WHERE num = #{num}
+    </update>
+    
+    <delete id="deleteBoard" parameterType="_int">
+        DELETE FROM board WHERE num = #{num}
+    </delete>
+    
+    <update id="updateReplyOrder" parameterType="Board">
+        UPDATE board SET reply_order = reply_order + 1 WHERE master_num = #{masterNum} AND reply_order > #{replyOrder}
+    </update>
+    
+    <insert id="insertReply" parameterType="Board">
+        <selectKey keyProperty="num" resultType="_int" order="BEFORE">
+            SELECT board_num_seq.NEXTVAL FROM dual
+        </selectKey>
+        INSERT INTO board (num, writer, title, contents, ip, read_count, reg_date, mod_date, master_num, reply_order, reply_step) 
+		VALUES (#{num}, #{writer}, #{title}, #{contents}, #{ip}, #{readCount}, #{regDate}, #{modDate}, #{masterNum}, #{replyOrder}+1, #{replyStep}+1)
+    </insert>
+    
+</mapper>
