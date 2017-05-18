@@ -15,12 +15,20 @@ public interface BrainWritingService {
 	public static final int COMPLETE_LOAD_NEXR_ROUND_FAILURE_CODE = 200;
 	
 	public void init();
-	public Session createSession(User master) throws DataDuplicatedException;
-	public void concludeSession(Session session) throws DataNotFoundException;
+	public void createMeetingRoom(MeetingRoom room);
+	public void closeMeetingRoom(MeetingRoom room);
+	public void addContributor(MeetingRoom room, User user);
+	public void removeContributor(MeetingRoom room, User user);
+	public void createSession(Session session) throws DataDuplicatedException;
+	public void completeSession(Session session) throws DataNotFoundException;
+	public void saveSession() throws DataNotFoundException;
+	public void updateSession(Session session) throws DataNotFoundException;
+	public void removeSession(Session session) throws DataNotFoundException;
 	public List<Session> getSessionList(Map<String, Object> params);
 	public Session getSession(int sessionId) throws DataNotFoundException;
 	public void addContributor(Session session, User user) throws DataNotFoundException, DataDuplicatedException; 
-	public void removeContributor(Session session, User user) throws DataNotFoundException;
 	public int completeRound(Session session, User user);
 	public int nextRound(Session session);
+	public void initMeeting(MeetingRoom room);
+	public void addIdeaList(Sheet currSheet, List<Idea> ideaList, User author);
 }
