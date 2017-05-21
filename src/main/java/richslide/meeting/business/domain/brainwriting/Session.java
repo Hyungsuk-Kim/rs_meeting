@@ -23,6 +23,8 @@ public class Session implements Serializable {
 	
 	public static final int PUBLIC_SESSION = 0;
 	public static final int PRIVATE_SESSION = 1;
+	public static final int ENABLE_SESSION = 0;
+	public static final int DISABLE_SESSION = 1;
 	
 	public Session() {
 		

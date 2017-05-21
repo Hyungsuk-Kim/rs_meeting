@@ -15,14 +15,19 @@ public interface BrainWritingDAO {
 	public int insertSheet(Sheet sheet);
 	public int updateSheet(Sheet sheet);
 	public int deleteSheet(Sheet sheet);
-	public Sheet selectSheet(String sheetId);
+	public Sheet selectSheet(String sheetId, int sessionId);
 	public List<Sheet> selectSheetListBySessionId(int sessionId);
 	public List<Sheet> selectSheetListByUser(User user);
 	
-	public int insertIdea(Idea idea);
-	public int updateIdea(Idea idea);
-	public int deleteIdea(Idea idea);
-	public Idea selectIdea(int ideaId);
+	public int insertIdea(Idea idea, Sheet currSheet);
+	public int updateIdea(Idea idea, Sheet currSheet);
+	public int deleteIdea(Idea idea, Sheet currSheet);
+	public Idea selectIdea(int ideaId, String sheetId, int sessionId);
 	public List<Idea> selectIdeaListBySheetId(String sheetId);
-	public List<Idea> selectIdeaListByUser(User user);
+	public List<Idea> selectIdeaListByUser(User user, int sessionId);
+	
+	public List<User> selectContributorList(int sessionId);
+	public int insertContributor(User user, int sessionId);
+	public int updateContributor(User user, int sessionId);
+	public int deleteContributor(User user, int sessionId);
 }
