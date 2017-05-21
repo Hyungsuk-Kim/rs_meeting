@@ -2,38 +2,63 @@ package richslide.meeting.business.dataaccess;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import richslide.meeting.business.domain.brainwriting.Idea;
 import richslide.meeting.business.domain.brainwriting.Session;
 import richslide.meeting.business.domain.brainwriting.Sheet;
 import richslide.meeting.business.domain.brainwriting.User;
+import richslide.meeting.common.CommonConst;
+import richslide.meeting.util.DAOUtil;
 
 public class BrainWritingDAOImpl implements BrainWritingDAO {
 	
-	String driver = "com.mysql.jdbc.Driver";
-    String url = "jdbc:mysql://localhost:3306/MiniProject";
-    String user = "root";
-    String password = "1234";
+	private static final String INSERT_SESSION_KEY = "insert_session";
+	private static final String UPDATE_SESSION_KEY = "update_session";
+	private static final String DELETE_SESSION_KEY = "delete_session";
 	
-    public BrainWritingDAOImpl() {
-        try {
-        	Class.forName(driver);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+	private static final String[] SESSION_INSERT_COLS = {"subject", "master_id", "start_time", "end_time", "time_per_round", "suggestion_count", "exposure", "del_flag"};
+	private static final String[] SESSION_UPDATE_COLS = {};
+	private static final String SESSION_DELETE_PK = "session_id";
+    
+    private Map<String, Object> columnPreSet = new HashMap<String, Object>();
+    
+    {
+    	String[] keyArr = {INSERT_SESSION_KEY, UPDATE_SESSION_KEY, DELETE_SESSION_KEY};
+    	Object[] valueArr = {SESSION_INSERT_COLS, SESSION_UPDATE_COLS, SESSION_DELETE_PK};
+    	
+    	for (int i = 0 ; i < keyArr.length; i++) {
+    		columnPreSet.put(keyArr[i], valueArr[i]);
+    	}
     }
     
-    protected Connection obtainConnection() throws SQLException {
-    	return DriverManager.getConnection(url, user, password);
-    }
-
+    public BrainWritingDAOImpl() {}
+    
 	@Override
 	public int insertSession(Session session) {
-		// TODO Auto-generated method stub
-		return 0;
+		String sql = this.callQueryStringMethodByMap(INSERT_SESSION_KEY);
+		int result = 0;
+		
+		Connection conn;
+		PreparedStatement pstmt;
+		
+		
+		try {
+			conn = DAOUtil.obtainConnection();
+			pstmt = conn.prepareStatement(sql);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			
+		}
+		return result;
 	}
 
 	@Override
@@ -132,4 +157,7 @@ public class BrainWritingDAOImpl implements BrainWritingDAO {
 		return null;
 	}
 	
+	private String callQueryStringMethodByMap(String key) {
+		return DAOUtil.queryStringByMap(this.columnPreSet, key);
+	}
 }
