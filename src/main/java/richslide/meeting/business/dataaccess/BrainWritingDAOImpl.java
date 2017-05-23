@@ -354,7 +354,6 @@ public class BrainWritingDAOImpl implements BrainWritingDAO {
 			try { if (conn != null) conn.close(); } catch(SQLException ex){ ex.printStackTrace(System.err); }
 		}
 		
-		
 		return affectedRows;
 	}
 }
